@@ -27,8 +27,16 @@ namespace DemoApp.ViewModel
 
         public CustomerViewModel(Customer customer, CustomerRepository customerRepository)
         {
-            _customer = customer ?? throw new ArgumentNullException("customer");
-            _customerRepository = customerRepository ?? throw new ArgumentNullException("customerRepository");
+            if (customer == null)
+            {
+                throw new ArgumentNullException("customer");
+            }
+            _customer = customer;
+            if (customerRepository == null)
+            {
+                throw new ArgumentNullException("customerRepository");
+            }
+            _customerRepository = customerRepository;
             _customerType = Strings.CustomerViewModel_CustomerTypeOption_NotSpecified;
         }
 
@@ -105,7 +113,10 @@ namespace DemoApp.ViewModel
         /// </summary>
         public string CustomerType
         {
-            get { return _customerType; }
+            get
+            {
+                return _customerType;
+            }
             set
             {
                 if (value == _customerType || String.IsNullOrEmpty(value))
@@ -258,7 +269,10 @@ namespace DemoApp.ViewModel
 
         string IDataErrorInfo.Error
         {
-            get { return (_customer as IDataErrorInfo).Error; }
+            get
+            {
+                return (_customer as IDataErrorInfo).Error;
+            }
         }
 
         string IDataErrorInfo.this[string propertyName]

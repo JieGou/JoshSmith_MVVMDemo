@@ -11,7 +11,9 @@ namespace DemoApp.ViewModel
         public CommandViewModel(string displayName, ICommand command)
         {
             if (command == null)
+            {
                 throw new ArgumentNullException("command");
+            }
 
             base.DisplayName = displayName;
             this.Command = command;

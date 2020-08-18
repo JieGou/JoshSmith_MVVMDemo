@@ -1,4 +1,7 @@
-﻿using System;
+﻿using DemoApp.DataAccess;
+using DemoApp.Model;
+using DemoApp.Properties;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -6,9 +9,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Data;
-using DemoApp.DataAccess;
-using DemoApp.Model;
-using DemoApp.Properties;
 
 namespace DemoApp.ViewModel
 {
@@ -18,12 +18,12 @@ namespace DemoApp.ViewModel
     public class MainWindowViewModel : WorkspaceViewModel
     {
         #region Fields
-                
-        ReadOnlyCollection<CommandViewModel> _commands;
-        readonly CustomerRepository _customerRepository;
-        ObservableCollection<WorkspaceViewModel> _workspaces;
 
-        #endregion // Fields
+        private ReadOnlyCollection<CommandViewModel> _commands;
+        private readonly CustomerRepository _customerRepository;
+        private ObservableCollection<WorkspaceViewModel> _workspaces;
+
+        #endregion Fields
 
         #region Constructor
 
@@ -34,12 +34,12 @@ namespace DemoApp.ViewModel
             _customerRepository = new CustomerRepository(customerDataFile);
         }
 
-        #endregion // Constructor
+        #endregion Constructor
 
         #region Commands
 
         /// <summary>
-        /// Returns a read-only list of commands 
+        /// Returns a read-only list of commands
         /// that the UI can display and execute.
         /// </summary>
         public ReadOnlyCollection<CommandViewModel> Commands
@@ -55,7 +55,7 @@ namespace DemoApp.ViewModel
             }
         }
 
-        List<CommandViewModel> CreateCommands()
+        private List<CommandViewModel> CreateCommands()
         {
             return new List<CommandViewModel>
             {
@@ -69,7 +69,7 @@ namespace DemoApp.ViewModel
             };
         }
 
-        #endregion // Commands
+        #endregion Commands
 
         #region Workspaces
 
@@ -90,29 +90,37 @@ namespace DemoApp.ViewModel
             }
         }
 
-        void OnWorkspacesChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void OnWorkspacesChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null && e.NewItems.Count != 0)
+            {
                 foreach (WorkspaceViewModel workspace in e.NewItems)
+                {
                     workspace.RequestClose += this.OnWorkspaceRequestClose;
+                }
+            }
 
             if (e.OldItems != null && e.OldItems.Count != 0)
+            {
                 foreach (WorkspaceViewModel workspace in e.OldItems)
+                {
                     workspace.RequestClose -= this.OnWorkspaceRequestClose;
+                }
+            }
         }
 
-        void OnWorkspaceRequestClose(object sender, EventArgs e)
+        private void OnWorkspaceRequestClose(object sender, EventArgs e)
         {
             WorkspaceViewModel workspace = sender as WorkspaceViewModel;
             workspace.Dispose();
             this.Workspaces.Remove(workspace);
         }
 
-        #endregion // Workspaces
+        #endregion Workspaces
 
         #region Private Helpers
 
-        void CreateNewCustomer()
+        private void CreateNewCustomer()
         {
             Customer newCustomer = Customer.CreateNewCustomer();
             CustomerViewModel workspace = new CustomerViewModel(newCustomer, _customerRepository);
@@ -120,7 +128,7 @@ namespace DemoApp.ViewModel
             this.SetActiveWorkspace(workspace);
         }
 
-        void ShowAllCustomers()
+        private void ShowAllCustomers()
         {
             AllCustomersViewModel workspace =
                 this.Workspaces.FirstOrDefault(vm => vm is AllCustomersViewModel)
@@ -135,7 +143,7 @@ namespace DemoApp.ViewModel
             this.SetActiveWorkspace(workspace);
         }
 
-        void SetActiveWorkspace(WorkspaceViewModel workspace)
+        private void SetActiveWorkspace(WorkspaceViewModel workspace)
         {
             Debug.Assert(this.Workspaces.Contains(workspace));
 
@@ -144,6 +152,6 @@ namespace DemoApp.ViewModel
                 collectionView.MoveCurrentTo(workspace);
         }
 
-        #endregion // Private Helpers
+        #endregion Private Helpers
     }
 }

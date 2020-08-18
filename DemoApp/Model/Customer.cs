@@ -1,8 +1,8 @@
-﻿using System;
+﻿using DemoApp.Properties;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
-using DemoApp.Properties;
 
 namespace DemoApp.Model
 {
@@ -11,6 +11,7 @@ namespace DemoApp.Model
     /// has built-in validation logic. It is wrapped
     /// by the CustomerViewModel class, which enables it to
     /// be easily displayed and edited by a WPF user interface.
+    /// 通过标准的IDataErrorInfo 接口实现了验证消息
     /// </summary>
     public class Customer : IDataErrorInfo
     {
@@ -22,11 +23,11 @@ namespace DemoApp.Model
         }
 
         public static Customer CreateCustomer(
-            double totalSales,
-            string firstName,
-            string lastName,
-            bool isCompany,
-            string email)
+                                                double totalSales,
+                                                string firstName,
+                                                string lastName,
+                                                bool isCompany,
+                                                string email)
         {
             return new Customer
             {
@@ -42,7 +43,7 @@ namespace DemoApp.Model
         {
         }
 
-        #endregion // Creation
+        #endregion Creation
 
         #region State Properties
 
@@ -52,7 +53,7 @@ namespace DemoApp.Model
         public string Email { get; set; }
 
         /// <summary>
-        /// Gets/sets the customer's first name.  If this customer is a 
+        /// Gets/sets the customer's first name.  If this customer is a
         /// company, this value stores the company's name.
         /// </summary>
         public string FirstName { get; set; }
@@ -64,7 +65,7 @@ namespace DemoApp.Model
         public bool IsCompany { get; set; }
 
         /// <summary>
-        /// Gets/sets the customer's last name.  If this customer is a 
+        /// Gets/sets the customer's last name.  If this customer is a
         /// company, this value is not set.
         /// </summary>
         public string LastName { get; set; }
@@ -74,18 +75,27 @@ namespace DemoApp.Model
         /// </summary>
         public double TotalSales { get; private set; }
 
-        #endregion // State Properties
+        #endregion State Properties
 
         #region IDataErrorInfo Members
 
-        string IDataErrorInfo.Error { get { return null; } }
+        string IDataErrorInfo.Error
+        {
+            get
+            {
+                return null;
+            }
+        }
 
         string IDataErrorInfo.this[string propertyName]
         {
-            get { return this.GetValidationError(propertyName); }
+            get
+            {
+                return this.GetValidationError(propertyName);
+            }
         }
 
-        #endregion // IDataErrorInfo Members
+        #endregion IDataErrorInfo Members
 
         #region Validation
 
@@ -97,24 +107,30 @@ namespace DemoApp.Model
             get
             {
                 foreach (string property in ValidatedProperties)
+                {
                     if (GetValidationError(property) != null)
+                    {
                         return false;
+                    }
+                }
 
                 return true;
             }
         }
 
-        static readonly string[] ValidatedProperties = 
-        { 
-            "Email", 
-            "FirstName", 
+        private static readonly string[] ValidatedProperties =
+        {
+            "Email",
+            "FirstName",
             "LastName",
         };
 
-        string GetValidationError(string propertyName)
+        private string GetValidationError(string propertyName)
         {
             if (Array.IndexOf(ValidatedProperties, propertyName) < 0)
+            {
                 return null;
+            }
 
             string error = null;
 
@@ -140,7 +156,7 @@ namespace DemoApp.Model
             return error;
         }
 
-        string ValidateEmail()
+        private string ValidateEmail()
         {
             if (IsStringMissing(this.Email))
             {
@@ -153,7 +169,7 @@ namespace DemoApp.Model
             return null;
         }
 
-        string ValidateFirstName()
+        private string ValidateFirstName()
         {
             if (IsStringMissing(this.FirstName))
             {
@@ -162,7 +178,7 @@ namespace DemoApp.Model
             return null;
         }
 
-        string ValidateLastName()
+        private string ValidateLastName()
         {
             if (this.IsCompany)
             {
@@ -177,14 +193,14 @@ namespace DemoApp.Model
             return null;
         }
 
-        static bool IsStringMissing(string value)
+        private static bool IsStringMissing(string value)
         {
             return
                 String.IsNullOrEmpty(value) ||
                 value.Trim() == String.Empty;
         }
 
-        static bool IsValidEmailAddress(string email)
+        private static bool IsValidEmailAddress(string email)
         {
             if (IsStringMissing(email))
                 return false;
@@ -195,6 +211,6 @@ namespace DemoApp.Model
             return Regex.IsMatch(email, pattern, RegexOptions.IgnoreCase);
         }
 
-        #endregion // Validation
+        #endregion Validation
     }
 }

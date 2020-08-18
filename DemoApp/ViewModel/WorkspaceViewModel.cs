@@ -4,7 +4,7 @@ using System.Windows.Input;
 namespace DemoApp.ViewModel
 {
     /// <summary>
-    /// This ViewModelBase subclass requests to be removed 
+    /// This ViewModelBase subclass requests to be removed
     /// from the UI when its CloseCommand executes.
     /// This class is abstract.
     /// </summary>
@@ -12,9 +12,9 @@ namespace DemoApp.ViewModel
     {
         #region Fields
 
-        RelayCommand _closeCommand;
+        private RelayCommand _closeCommand;
 
-        #endregion // Fields
+        #endregion Fields
 
         #region Constructor
 
@@ -22,7 +22,7 @@ namespace DemoApp.ViewModel
         {
         }
 
-        #endregion // Constructor
+        #endregion Constructor
 
         #region CloseCommand
 
@@ -35,13 +35,15 @@ namespace DemoApp.ViewModel
             get
             {
                 if (_closeCommand == null)
+                {
                     _closeCommand = new RelayCommand(param => this.OnRequestClose());
+                }
 
                 return _closeCommand;
             }
         }
 
-        #endregion // CloseCommand
+        #endregion CloseCommand
 
         #region RequestClose [event]
 
@@ -50,13 +52,15 @@ namespace DemoApp.ViewModel
         /// </summary>
         public event EventHandler RequestClose;
 
-        void OnRequestClose()
+        private void OnRequestClose()
         {
             EventHandler handler = this.RequestClose;
             if (handler != null)
+            {
                 handler(this, EventArgs.Empty);
+            }
         }
 
-        #endregion // RequestClose [event]
+        #endregion RequestClose [event]
     }
 }
