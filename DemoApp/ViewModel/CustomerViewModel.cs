@@ -1,9 +1,9 @@
-﻿using System;
-using System.ComponentModel;
-using System.Windows.Input;
-using DemoApp.DataAccess;
+﻿using DemoApp.DataAccess;
 using DemoApp.Model;
 using DemoApp.Properties;
+using System;
+using System.ComponentModel;
+using System.Windows.Input;
 
 namespace DemoApp.ViewModel
 {
@@ -14,14 +14,14 @@ namespace DemoApp.ViewModel
     {
         #region Fields
 
-        readonly Customer _customer;
-        readonly CustomerRepository _customerRepository;
-        string _customerType;
-        string[] _customerTypeOptions;
-        bool _isSelected;
-        RelayCommand _saveCommand;
+        private readonly Customer _customer;
+        private readonly CustomerRepository _customerRepository;
+        private string _customerType;
+        private string[] _customerTypeOptions;
+        private bool _isSelected;
+        private RelayCommand _saveCommand;
 
-        #endregion // Fields
+        #endregion Fields
 
         #region Constructor
 
@@ -32,7 +32,7 @@ namespace DemoApp.ViewModel
             _customerType = Strings.CustomerViewModel_CustomerTypeOption_NotSpecified;
         }
 
-        #endregion // Constructor
+        #endregion Constructor
 
         #region Customer Properties
 
@@ -42,7 +42,9 @@ namespace DemoApp.ViewModel
             set
             {
                 if (value == _customer.Email)
+                {
                     return;
+                }
 
                 _customer.Email = value;
 
@@ -56,7 +58,9 @@ namespace DemoApp.ViewModel
             set
             {
                 if (value == _customer.FirstName)
+                {
                     return;
+                }
 
                 _customer.FirstName = value;
 
@@ -75,7 +79,9 @@ namespace DemoApp.ViewModel
             set
             {
                 if (value == _customer.LastName)
+                {
                     return;
+                }
 
                 _customer.LastName = value;
 
@@ -88,7 +94,7 @@ namespace DemoApp.ViewModel
             get { return _customer.TotalSales; }
         }
 
-        #endregion // Customer Properties
+        #endregion Customer Properties
 
         #region Presentation Properties
 
@@ -103,7 +109,9 @@ namespace DemoApp.ViewModel
             set
             {
                 if (value == _customerType || String.IsNullOrEmpty(value))
+                {
                     return;
+                }
 
                 _customerType = value;
 
@@ -121,7 +129,7 @@ namespace DemoApp.ViewModel
                 // Since this ViewModel object has knowledge of how to translate
                 // a customer type (i.e. text) to a Customer object's IsCompany property,
                 // it also must raise a property change notification when it changes
-                // the value of IsCompany.  The LastName property is validated 
+                // the value of IsCompany.  The LastName property is validated
                 // differently based on whether the customer is a company or not,
                 // so the validation for the LastName property must execute now.
                 base.OnPropertyChanged("LastName");
@@ -176,7 +184,9 @@ namespace DemoApp.ViewModel
             set
             {
                 if (value == _isSelected)
+                {
                     return;
+                }
 
                 _isSelected = value;
 
@@ -193,16 +203,13 @@ namespace DemoApp.ViewModel
             {
                 if (_saveCommand == null)
                 {
-                    _saveCommand = new RelayCommand(
-                        param => this.Save(),
-                        param => this.CanSave
-                        );
+                    _saveCommand = new RelayCommand(param => Save(), param => CanSave);
                 }
                 return _saveCommand;
             }
         }
 
-        #endregion // Presentation Properties
+        #endregion Presentation Properties
 
         #region Public Methods
 
@@ -212,15 +219,19 @@ namespace DemoApp.ViewModel
         public void Save()
         {
             if (!_customer.IsValid)
+            {
                 throw new InvalidOperationException(Strings.CustomerViewModel_Exception_CannotSave);
+            }
 
             if (this.IsNewCustomer)
+            {
                 _customerRepository.AddCustomer(_customer);
-            
+            }
+
             base.OnPropertyChanged("DisplayName");
         }
 
-        #endregion // Public Methods
+        #endregion Public Methods
 
         #region Private Helpers
 
@@ -228,7 +239,7 @@ namespace DemoApp.ViewModel
         /// Returns true if this customer was created by the user and it has not yet
         /// been saved to the customer repository.
         /// </summary>
-        bool IsNewCustomer
+        private bool IsNewCustomer
         {
             get { return !_customerRepository.ContainsCustomer(_customer); }
         }
@@ -236,12 +247,12 @@ namespace DemoApp.ViewModel
         /// <summary>
         /// Returns true if the customer is valid and can be saved.
         /// </summary>
-        bool CanSave
+        private bool CanSave
         {
             get { return String.IsNullOrEmpty(this.ValidateCustomerType()) && _customer.IsValid; }
         }
 
-        #endregion // Private Helpers
+        #endregion Private Helpers
 
         #region IDataErrorInfo Members
 
@@ -258,7 +269,7 @@ namespace DemoApp.ViewModel
 
                 if (propertyName == "CustomerType")
                 {
-                    // The IsCompany property of the Customer class 
+                    // The IsCompany property of the Customer class
                     // is Boolean, so it has no concept of being in
                     // an "unselected" state.  The CustomerViewModel
                     // class handles this mapping and validation.
@@ -278,15 +289,17 @@ namespace DemoApp.ViewModel
             }
         }
 
-        string ValidateCustomerType()
+        private string ValidateCustomerType()
         {
             if (this.CustomerType == Strings.CustomerViewModel_CustomerTypeOption_Company ||
                this.CustomerType == Strings.CustomerViewModel_CustomerTypeOption_Person)
+            {
                 return null;
+            }
 
             return Strings.CustomerViewModel_Error_MissingCustomerType;
         }
 
-        #endregion // IDataErrorInfo Members
+        #endregion IDataErrorInfo Members
     }
 }

@@ -5,20 +5,17 @@ using System.Windows.Input;
 namespace DemoApp
 {
     /// <summary>
-    /// A command whose sole purpose is to 
-    /// relay its functionality to other
-    /// objects by invoking delegates. The
-    /// default return value for the CanExecute
-    /// method is 'true'.
+    /// A command whose sole purpose is to relay its functionality to other
+    /// objects by invoking delegates. The default return value for the CanExecute method is 'true'.
     /// </summary>
     public class RelayCommand : ICommand
     {
         #region Fields
 
-        readonly Action<object> _execute;
-        readonly Predicate<object> _canExecute;        
+        private readonly Action<object> _execute;
+        private readonly Predicate<object> _canExecute;
 
-        #endregion // Fields
+        #endregion Fields
 
         #region Constructors
 
@@ -26,8 +23,7 @@ namespace DemoApp
         /// Creates a new command that can always execute.
         /// </summary>
         /// <param name="execute">The execution logic.</param>
-        public RelayCommand(Action<object> execute)
-            : this(execute, null)
+        public RelayCommand(Action<object> execute) : this(execute, null)
         {
         }
 
@@ -39,13 +35,15 @@ namespace DemoApp
         public RelayCommand(Action<object> execute, Predicate<object> canExecute)
         {
             if (execute == null)
+            {
                 throw new ArgumentNullException("execute");
+            }
 
             _execute = execute;
-            _canExecute = canExecute;           
+            _canExecute = canExecute;
         }
 
-        #endregion // Constructors
+        #endregion Constructors
 
         #region ICommand Members
 
@@ -57,8 +55,8 @@ namespace DemoApp
 
         public event EventHandler CanExecuteChanged
         {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
+            add => CommandManager.RequerySuggested += value;
+            remove => CommandManager.RequerySuggested -= value;
         }
 
         public void Execute(object parameter)
@@ -66,6 +64,6 @@ namespace DemoApp
             _execute(parameter);
         }
 
-        #endregion // ICommand Members
+        #endregion ICommand Members
     }
 }
